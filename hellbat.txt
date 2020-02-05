@@ -1,0 +1,81 @@
+( * From p449 "Notes on Hellbat:" * )
+
+( * To change Travesty to Hellbat, procedures InitSkip and Match * )
+( * are replaced with the versions given in listing 2, and numerous * )
+( * lines are deleted as shown below. Note that WriteCharacter now * )
+( * receives its characters from Match and has only formatting * )
+( * duties to perform. If your Pascal has its own RANDOM function, * )
+( * make the deletions listed in the section on Travesty for line 40; * )
+( * and the major change--applied above to the WriteCharacter procedure-- * )
+( * should instead be made to the line in the new Match procedure that * )
+( * invokes Random. * )
+( * Lines to delete for Hellbat iinclude 28, 72 to 80, 269, * )
+( * 273 (all references to FreqArray) and 232 to 245 (process for * )
+( * getting a character). * )
+
+( * From p469: * )
+
+( * Listing 2: These routines turn Travesty into Hellbat, a faster, but finicky, version. *)
+
+PROCEDURE InitSkip:
+VAR
+  HeadSkip, TailSkip : ARRAY [''..'|'] of INTEGER;
+  ch : CHAR;
+  i : INTEGER;
+BEGIN
+    {Initialize HeadSkip and TailSkip to indicate that}
+    {no occurrence of any character has yet been found.}
+  FOR ch := '' TO '|' DO
+  BEGIN
+  HeadSkip[ch] := TotalChars + 1;
+  TailSkip[ch] := 0
+  END;
+    {Link SkipArray by reverse pass through BigArray}
+  FOR I := (TotalChars -PatLength) DOWNTO 1 DO
+  BEGIN
+    ch := BigArray[i]:
+    IF TailSkip[ch] - 0
+    THEN {1st occurrence}
+      BEGIN
+        TailSkip[ch] := i;
+        HeadSkip[ch] := i
+      END
+    ELSE
+      BEGIN
+        SkipArray[i] : HeadSkip[ch];
+        HeadSkip[ch] : i
+    END
+  END;
+      {Close links from tail back to head.}
+    FOR ch :='' TO '|' DO
+    IF TailSkip[ch] <> 0 THEN
+      SkipArray [TailSkip[ch]] := HeadSkip[ch]
+END;
+
+PROCEDURE Match:
+VAR
+  i : INTEGER;         {one location BEFORE start of Match in BigArray}
+  j : INTEGER;         {index into pattern}
+  Found : BOOLEAN;         {true if there is a match from i+ 1 to i+j-1}
+  ch1 : CHAR;              {first character in Pattern; used for skipping}
+BEGIN
+  ch1 := Pattern[1];
+                               {Hop into Big Array at a random location}
+  i := TRUNC((TotalChars - PathLength) * Random(Seed));
+                        {Search for an instance of ch1 at location i+1}
+  WHILE BigArray[i+1] <> ch1 DO
+  i := (i+1) MOD (TotalChars - PatLength);
+  Found := false;
+  WHILE (NOT Found) DO
+BEGIN
+  j := 1;
+  Found: true;
+  WHILE (Found AND (j < - PatLength)) DO
+    IF BigArray[i+1] <> Pattern[j]
+      THEN Found: false
+    ELSE j := j + 1:
+    IF Found THEN
+      NewChar := BigArray[i + PatLength + 1]
+    ELSE 1 := Skip Array[i+1] - 1
+  END
+END;
